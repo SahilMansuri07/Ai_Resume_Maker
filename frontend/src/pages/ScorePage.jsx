@@ -6,7 +6,6 @@ const CircularScore = ({ score }) => {
   const stroke = 10;
   const normalizedRadius = radius - stroke * 0.5;
   const circumference = normalizedRadius * 2 * Math.PI;
-
   const [offset, setOffset] = useState(circumference);
 
   useEffect(() => {
@@ -87,71 +86,78 @@ const ScorePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-[#0f172a] via-[#1e1b4b] to-[#4c1d95] px-4 py-16 text-white">
-      <div className="mb-10 text-5xl font-extrabold text-purple-300">Resume Analyzer</div>
+    <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-[#0f172a] via-[#1e1b4b] to-[#4c1d95] px-4 py-10 text-white">
+      <h1 className="mb-8 text-3xl md:text-5xl font-extrabold text-purple-300 text-center">Resume Analyzer</h1>
 
-      <div className="mb-6 flex flex-col w-full max-w-3xl">
-        <h2 className="text-purple-200 text-xl font-semibold mb-2">Upload Your Resume</h2>
-        <input
-          type="file"
-          onChange={handleFileChange}
-          className="block w-full cursor-pointer rounded-2xl border border-purple-300 bg-purple-100/10 p-3 text-purple-200 text-base
-                     file:mr-4 file:py-2 file:px-4
-                     file:rounded-lg file:border-0
-                     file:bg-purple-600 file:text-white
-                     hover:file:bg-purple-700
-                     file:focus:outline-none file:focus:ring-2 file:focus:ring-purple-500
-                     file:cursor-pointer"
-        />
-      </div>
-
-      <div className="mb-8 flex flex-col w-full max-w-3xl">
-        <h2 className="text-purple-200 text-xl font-semibold mb-2">Paste Job Description</h2>
-        <textarea
-          rows={6}
-          value={jobDescription}
-          onChange={handleDescriptionChange}
-          placeholder="Paste job description here..."
-          className="w-full rounded-lg border border-purple-300 bg-purple-100/10 p-4 text-purple-100 text-base focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
-      </div>
-
-      <button
-        onClick={handleSubmit}
-        disabled={loading}
-        className="mb-10 rounded-2xl bg-purple-600 px-8 py-3 font-semibold text-white text-base shadow hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
-      >
-        {loading ? 'Analyzing...' : 'Analyze'}
-      </button>
-
-      {result && (
-        <div className="w-full max-w-3xl rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur-lg space-y-6 border border-purple-400">
-          <h3 className="border-b border-purple-300 pb-2 text-3xl font-bold text-purple-200">Analysis Result</h3>
-
-          <p className="mb-1 font-semibold text-xl text-purple-300">Score :</p>
-          <div className="flex justify-center">
-            <CircularScore score={result['JD Match']} />
-          </div>
-
-          <div>
-            <p className="mb-1 font-semibold text-xl text-purple-300">Profile Summary:</p>
-            <p className="whitespace-pre-line text-purple-100 text-base">{result['Profile Summary']}</p>
-          </div>
-
-          {result['Missing Keywords'] && result['Missing Keywords'].length > 0 ? (
-            <div>
-              <p className="mb-1 font-semibold text-xl text-purple-300">Missing Keywords:</p>
-              <ul className="list-disc list-inside space-y-1 text-purple-100 text-base">
-                {result['Missing Keywords'].map((keyword, index) => (
-                  <li key={index}>⚠️ {keyword}</li>
-                ))}
-              </ul>
-            </div>
-          ) : (
-            <p className="font-semibold text-green-400 text-lg">Missing Keywords: None ✅</p>
-          )}
+      <div className="w-full max-w-3xl space-y-8">
+        {/* Upload Section */}
+        <div className="flex flex-col">
+          <label className="text-purple-200 text-lg font-semibold mb-2">Upload Your Resume</label>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            className="block w-full cursor-pointer rounded-lg border border-purple-400 bg-purple-100/10 p-3 text-purple-200 text-sm
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-lg file:border-0
+              file:bg-purple-600 file:text-white
+              hover:file:bg-purple-700
+              file:cursor-pointer"
+          />
         </div>
-      )}
+
+        {/* Job Description */}
+        <div className="flex flex-col">
+          <label className="text-purple-200 text-lg font-semibold mb-2">Paste Job Description</label>
+          <textarea
+            rows={6}
+            value={jobDescription}
+            onChange={handleDescriptionChange}
+            placeholder="Paste job description here..."
+            className="w-full rounded-lg border border-purple-300 bg-purple-100/10 p-4 text-purple-100 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+        </div>
+
+        {/* Submit Button */}
+        <div className="flex justify-center">
+          <button
+            onClick={handleSubmit}
+            disabled={loading}
+            className="rounded-xl bg-purple-600 px-8 py-3 font-semibold text-white text-sm shadow hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {loading ? 'Analyzing...' : 'Analyze'}
+          </button>
+        </div>
+
+        {/* Results Section */}
+        {result && (
+          <div className="rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur-lg space-y-6 border border-purple-400">
+            <h2 className="border-b border-purple-300 pb-2 text-2xl font-bold text-purple-200">Analysis Result</h2>
+
+            <div>
+              <p className="mb-1 font-semibold text-lg text-purple-300">Score</p>
+              <CircularScore score={result['JD Match']} />
+            </div>
+
+            <div>
+              <p className="mb-1 font-semibold text-lg text-purple-300">Profile Summary</p>
+              <p className="whitespace-pre-line text-purple-100 text-sm">{result['Profile Summary']}</p>
+            </div>
+
+            {result['Missing Keywords']?.length > 0 ? (
+              <div>
+                <p className="mb-1 font-semibold text-lg text-purple-300">Missing Keywords</p>
+                <ul className="list-disc list-inside space-y-1 text-purple-100 text-sm">
+                  {result['Missing Keywords'].map((keyword, index) => (
+                    <li key={index}>⚠️ {keyword}</li>
+                  ))}
+                </ul>
+              </div>
+            ) : (
+              <p className="font-semibold text-green-400 text-sm">✅ No Missing Keywords</p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

@@ -30,7 +30,7 @@ export default function Register() {
     const { email, password, name } = form;
 
     try {
-      const response = await fetch('http://localhost:8000/register/', {
+      const response = await fetch('http://127.0.0.1:8000/register/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -59,6 +59,8 @@ export default function Register() {
       }
     } catch (err) {
       setError('Error: ' + err.message);
+      console.error(err);
+      
     }
   };
 

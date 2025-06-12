@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-export default function Login() {
+export default function Login({ setUser }) {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -17,7 +17,7 @@ export default function Login() {
     setMessage('');
 
     try {
-      const response = await fetch('http://localhost:8000/login/', {
+      const response = await fetch('http://127.0.0.1:8000/login/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -25,9 +25,9 @@ export default function Login() {
         body: JSON.stringify(form),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
+      const data = await response.json();
 
+      if (!response.ok) {
         if (Array.isArray(data.detail)) {
           const errorMessages = data.detail
             .map((err) => `${err.loc.join(' > ')}: ${err.msg}`)
@@ -37,10 +37,15 @@ export default function Login() {
           setError(data.detail || 'Login failed');
         }
       } else {
-        const data = await response.json();
         setMessage('Login successful! Welcome back!');
-        setForm({ email: '', password: '' });
-        navigate("/");// optional
+        setForm({ email: '', password: '' }); 
+        localStorage.setItem('token', data.access_token);
+
+        // Example: set user from email before @ as username (you can customize)
+        const username = form.email.split('@')[0];
+        setUser({ username });
+
+        navigate('/'); // Redirect to home or dashboard as you want
       }
     } catch (err) {
       setError('Error: ' + err.message);
@@ -68,6 +73,7 @@ export default function Login() {
               className="w-full px-4 py-3 rounded-lg bg-purple-100/10 border border-purple-300 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Enter your email"
               required
+              autoComplete="email"
             />
           </div>
 
@@ -83,6 +89,7 @@ export default function Login() {
               className="w-full px-4 py-3 rounded-lg bg-purple-100/10 border border-purple-300 text-white placeholder-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
               placeholder="Enter your password"
               required
+              autoComplete="current-password"
             />
           </div>
 

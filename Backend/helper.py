@@ -2,6 +2,11 @@ import PyPDF2 as pdf
 import google.generativeai as genai
 import json
 import re
+from Model.AddResumeModel import Resume
+from io import BytesIO
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException
 
 def Configure_genai(api_key):
     try:
@@ -87,3 +92,48 @@ async def get_summary_response(prompt: str) -> str:
 
     except Exception as e:
         raise Exception(f"Error generating summary: {str(e)}")
+
+
+# def generate_resume_pdf(resume: Resume) -> bytes:
+#     buffer = BytesIO()
+#     c = canvas.Canvas(buffer, pagesize=letter)
+#     width, height = letter
+
+#     y = height - 50
+#     c.setFont("Helvetica-Bold", 16)
+#     c.drawString(50, y, resume.personal_details.get("name", "Unnamed"))
+#     y -= 20
+
+#     c.setFont("Helvetica", 10)
+#     c.drawString(50, y, f"Email: {resume.personal_details.get('email', '')}")
+#     y -= 15
+#     c.drawString(50, y, f"Phone: {resume.personal_details.get('phone', '')}")
+#     y -= 25
+
+#     def draw_section(title, items):
+#         nonlocal y
+#         c.setFont("Helvetica-Bold", 12)
+#         c.drawString(50, y, title)
+#         y -= 15
+#         c.setFont("Helvetica", 10)
+#         if isinstance(items, str):
+#             c.drawString(60, y, items)
+#             y -= 15
+#         elif isinstance(items, list):
+#             for item in items:
+#                 line = f"- {item}" if isinstance(item, str) else str(item)
+#                 c.drawString(60, y, line[:100])
+#                 y -= 15
+#                 if y < 50:
+#                     c.showPage()
+#                     y = height - 50
+
+#     draw_section("Summary", resume.summary)
+#     draw_section("Skills", resume.skills)
+#     draw_section("Projects", resume.projects)
+#     draw_section("Experience", resume.experience)
+#     draw_section("Education", resume.education)
+
+#     c.showPage()
+#     c.save()
+#     return buffer.getvalue()

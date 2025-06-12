@@ -7,6 +7,7 @@ export default function Summary({ form, onChange }) {
   const isValid = form.summary.trim().length >= 100;
 
   const handleSubmit = async () => {
+    console.log(form.personal.job_title)
     try {
       const response = await fetch("http://127.0.0.1:8000/gen/summary", {
         method: "POST",

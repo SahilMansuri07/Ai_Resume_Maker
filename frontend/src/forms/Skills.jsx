@@ -1,12 +1,10 @@
-export default function Skills({ form = {} , onChange }) {
-  
+export default function Skills({ form = {}, onChange }) {
   return (
     <div className="mb-6">
       <label className="block text-lg font-bold text-purple-600 mb-4">Skills</label>
-      <input
-        type="text"
+      <textarea
         name="skills"
-        value={form.skills}
+        value={form.skills || ""}
         onChange={onChange}
         placeholder="Enter comma-separated skills"
         className="w-full p-3 rounded border border-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-400"
