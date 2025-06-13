@@ -43,6 +43,7 @@ export default function Login({ setUser }) {
 
         // Example: set user from email before @ as username (you can customize)
         const username = form.email.split('@')[0];
+        
         setUser({ username });
 
         navigate('/'); // Redirect to home or dashboard as you want

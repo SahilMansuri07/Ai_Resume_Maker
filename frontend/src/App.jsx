@@ -1,5 +1,6 @@
+// App.jsx
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Route, Routes, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './pages/Hero';
@@ -11,29 +12,30 @@ import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
 import ProtectedRoutes from './auth/ProtectedRoutes';
 import About from './pages/About';
-import EditResume from './pages/EditResume'
+import EditResume from './pages/EditResume';
 import Blog from './pages/Blog';
-// On mount, try to get user from token/localStorage (you can decode token or fetch user)
 
 export default function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      // For demo, just set user as logged in, you can decode token for username
-      // or fetch user profile from API here
-      setUser({ username : "demouser"});
-    }
-  }, []);
+  const [user, setUser] = useState(null);// loading state added
+  const navigate = useNavigate();
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+      } else {
+        const decoded = JSON.parse(atob(token.split('.')[1]));
+        setUser(decoded.sub);  // Use `sub` (email) as the username
+      }
+    }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     setUser(null);
+    navigate('/login');
   };
 
   return (
-    <BrowserRouter>
+    <>
       <Header user={user} handleLogout={handleLogout} />
       <Routes>
         {/* Public routes */}
@@ -41,10 +43,7 @@ export default function App() {
         <Route path="/contact" element={<Contact />} />
         <Route path="/register" element={<Register />} />
         <Route path="/blog" element={<Blog />} />
-        <Route
-          path="/login"
-          element={<Login setUser={setUser} />}
-        />
+        <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/about" element={<About />} />
 
         {/* Protected routes */}
@@ -73,24 +72,23 @@ export default function App() {
           }
         />
         <Route
-          path="/editresume/:id" 
+          path="/editresume/:id"
           element={
-          <ProtectedRoutes user={user}>
-          <EditResume />
-          </ProtectedRoutes>
-          } />
+            <ProtectedRoutes user={user}>
+              <EditResume />
+            </ProtectedRoutes>
+          }
+        />
         <Route
           path="/dashboard/resumes"
           element={
-            <ProtectedRoutes user={user}>
+            <ProtectedRoutes user={user}> 
               <Dashboard />
             </ProtectedRoutes>
           }
         />
       </Routes>
       <Footer />
-    </BrowserRouter>
+    </>
   );
 }
-
-
