@@ -11,47 +11,50 @@ export default function Login({ setUser }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setMessage('');
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  setError('');
+  setMessage('');
 
+  try {
+    const response = await fetch(`${BACK_URL}/login/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(form),
+    });
+
+    let data;
     try {
-      const response = await fetch(`${BACK_URL}/login/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        if (Array.isArray(data.detail)) {
-          const errorMessages = data.detail
-            .map((err) => `${err.loc.join(' > ')}: ${err.msg}`)
-            .join('; ');
-          setError(errorMessages);
-        } else {
-          setError(data.detail || 'Login failed');
-        }
-      } else {
-        setMessage('Login successful! Welcome back!');
-        setForm({ email: '', password: '' }); 
-        localStorage.setItem('token', data.access_token);
-
-        // Example: set user from email before @ as username (you can customize)
-        const username = form.email.split('@')[0];
-        
-        setUser({ username });
-
-        navigate('/'); // Redirect to home or dashboard as you want
-      }
+      data = await response.json();
     } catch (err) {
-      setError('Error: ' + err.message);
+      throw new Error('Server did not return valid JSON. Please check the backend URL or server logs.');
     }
-  };
+
+    if (!response.ok) {
+      if (Array.isArray(data.detail)) {
+        const errorMessages = data.detail
+          .map((err) => `${err.loc.join(' > ')}: ${err.msg}`)
+          .join('; ');
+        setError(errorMessages);
+      } else {
+        setError(data.detail || 'Login failed');
+      }
+    } else {
+      setMessage('Login successful! Welcome back!');
+      setForm({ email: '', password: '' });
+      localStorage.setItem('token', data.access_token);
+
+      const username = form.email.split('@')[0];
+      setUser({ username });
+
+      navigate('/');
+    }
+  } catch (err) {
+    setError('Error: ' + err.message);
+  }
+};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-700 to-indigo-900 px-4">
