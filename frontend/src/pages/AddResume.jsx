@@ -41,9 +41,8 @@ export default function AddResume() {
     if (resumeIdParam) {
       const fetchResume = async () => {
         try {
-          console.log("Fetching resume with ID:", resumeIdParam);
           const token = localStorage.getItem('token');
-          const res = await fetch(`http://127.0.0.1:8000/resume/get/${resumeIdParam}`, {
+          const res = await fetch(`${BACK_URL}/resume/get/${resumeIdParam}`, {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
@@ -56,8 +55,7 @@ export default function AddResume() {
               experience: data.experience || [],
               education: data.education || [],
             });
-            console.log("Token used:", token);
-            console.log("Response status:", res.status);
+           
           }
         } catch (err) {
           setError('Failed to fetch resume for editing');
@@ -75,43 +73,6 @@ export default function AddResume() {
     if (step > 0) setStep(step - 1);
   };
 
-//  const handleDownload = async () => {
-//   if (!resumeId) {
-//     setError("Please save your resume before downloading.");
-//     return;
-//   }
-
-//   setError('');
-//   setMessage('');
-
-//   try {
-//     const response = await fetch(`http://127.0.0.1:8000/resume/download/${resumeId}`, {
-//       method: 'GET',
-//       headers: {
-//         "Authorization": `Bearer ${localStorage.getItem('token')}`,
-//       },
-//     });
-
-//     if (!response.ok) {
-//       const data = await response.json();
-//       setError(data.detail || 'Failed to download resume');
-//       return;
-//     }
-
-//     const blob = await response.blob();
-//     const url = window.URL.createObjectURL(blob);
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = `resume_${resumeId}.pdf`;
-//     document.body.appendChild(a);
-//     a.click();
-//     a.remove();
-//     window.URL.revokeObjectURL(url);
-//     setMessage("Resume downloaded successfully!");
-//   } catch (err) {
-//     setError('Error: ' + err.message);
-//   }
-// };
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (name in form.personal) {
@@ -142,14 +103,14 @@ export default function AddResume() {
     experience: form.experience,
     education: form.education,
   });
-
+   const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
   const handleSubmit = async () => {
     setError('');
     setMessage('');
     const submitData = prepareSubmitData();
 
     try {
-      const endpoint = resumeId ? `http://127.0.0.1:8000/resume/update/${resumeId}` : 'http://127.0.0.1:8000/resume/add';
+      const endpoint = resumeId ? `${BACK_URL}/resume/update/${resumeId}` : `${BACK_URL}/resume/add`;
       const method = resumeId ? 'PUT' : 'POST';
 
       const response = await fetch(endpoint, {

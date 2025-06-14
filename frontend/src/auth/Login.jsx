@@ -5,8 +5,8 @@ export default function Login({ setUser }) {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate();
-
+  const navigate = useNavigate(); // Replace with your backend URL
+  const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -17,7 +17,7 @@ export default function Login({ setUser }) {
     setMessage('');
 
     try {
-      const response = await fetch('http://127.0.0.1:8000/login/', {
+      const response = await fetch(`${BACK_URL}/login/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

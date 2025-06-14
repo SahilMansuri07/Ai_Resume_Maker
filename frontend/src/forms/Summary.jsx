@@ -5,11 +5,12 @@ export default function Summary({ form, onChange }) {
   
   const [aiText, setAiText] = useState('');
   const isValid = form.summary.trim().length >= 100;
+   const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
 
   const handleSubmit = async () => {
     console.log(form.personal.job_title)
     try {
-      const response = await fetch("http://127.0.0.1:8000/gen/summary", {
+      const response = await fetch(`${BACK_URL}/gen/summary`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

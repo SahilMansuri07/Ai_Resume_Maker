@@ -67,19 +67,20 @@ const ScorePage = () => {
     const formData = new FormData();
     formData.append('resume', selectedFile);
     formData.append('job_description', jobDescription);
+     const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
 
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:8000/analyze', formData, {
+      const response = await axios.post(`${BACK_URL}/analyze`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
+      alert('Something went wrong. Check console for details.');
       setResult(response.data);
     } catch (error) {
       console.error('Error uploading file:', error);
-      alert('Something went wrong. Check console for details.');
     } finally {
       setLoading(false);
     }

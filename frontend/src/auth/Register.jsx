@@ -28,9 +28,9 @@ export default function Register() {
     }
 
     const { email, password, name } = form;
-
+    const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
     try {
-      const response = await fetch('http://127.0.0.1:8000/register/', {
+      const response = await fetch(`${BACK_URL}/register/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

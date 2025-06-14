@@ -9,7 +9,8 @@ export default function EditResume() {
   useEffect(() => {
     const fetchResume = async () => {
       const token = localStorage.getItem('token')
-      const res = await fetch(`http://127.0.0.1:8000/resume/update/{resume_id}`, {
+       const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
+      const res = await fetch(`${BACK_URL}/resume/update/{resume_id}`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       if (res.ok) {

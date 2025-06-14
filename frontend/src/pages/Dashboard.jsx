@@ -12,13 +12,14 @@ export default function Dashboard() {
   const handleViewResume = (id) => {
     navigate(`resume/update/${id}`)
   }
+   const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
 
   useEffect(() => {
     const fetchResumes = async () => {
       setLoading(true)
       try {
         const token = localStorage.getItem('token')
-        const res = await fetch('http://127.0.0.1:8000/resume/list', {
+        const res = await fetch(`${BACK_URL}/resume/list`, {
           headers: { Authorization: `Bearer ${token}` }
         })
         if (res.ok) {

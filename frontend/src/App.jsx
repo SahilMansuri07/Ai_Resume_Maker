@@ -1,6 +1,6 @@
 // App.jsx
 import { useState, useEffect } from 'react';
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './pages/Hero';
@@ -16,27 +16,30 @@ import EditResume from './pages/EditResume';
 import Blog from './pages/Blog';
 
 export default function App() {
-  const [user, setUser] = useState(null);// loading state added
-  const navigate = useNavigate();
-    useEffect(() => {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        navigate('/login');
-      } else {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      try {
         const decoded = JSON.parse(atob(token.split('.')[1]));
-        setUser(decoded.sub);  // Use `sub` (email) as the username
+        setUser(decoded.sub); // You can also store more info if needed
+      } catch (error) {
+        console.error('Invalid token:', error);
+        setUser(null);
       }
-    }, [navigate]);
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     setUser(null);
-    navigate('/login');
   };
 
   return (
     <>
       <Header user={user} handleLogout={handleLogout} />
+
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<Hero />} />
@@ -82,12 +85,13 @@ export default function App() {
         <Route
           path="/dashboard/resumes"
           element={
-            <ProtectedRoutes user={user}> 
+            <ProtectedRoutes user={user}>
               <Dashboard />
             </ProtectedRoutes>
           }
         />
       </Routes>
+
       <Footer />
     </>
   );

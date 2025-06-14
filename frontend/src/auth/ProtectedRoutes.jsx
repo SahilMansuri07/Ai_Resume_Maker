@@ -1,15 +1,21 @@
-import React from 'react'
-import { Navigate } from 'react-router-dom'
+// auth/ProtectedRoutes.jsx
+import React from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
 
-export default function ProtectedRoutes({ children }) {
-  // Check for auth token or user info in localStorage/sessionStorage/context
-  const isAuthenticated = !!localStorage.getItem('token') // adjust as per your auth logic
+export default function ProtectedRoutes({ children, user }) {
+  const location = useLocation();
 
-  if (!isAuthenticated) {
-    // Redirect unauthenticated users to login
-    return <Navigate to="/login" replace />
+  const publicRoutes = ['/', '/about', '/contact', '/login', '/register', '/blog'];
+  const isPublic = publicRoutes.includes(location.pathname);
+  const isAuthenticated = !!user;
+
+  if (!isAuthenticated && isPublic) {
+    return children;
   }
 
-  // Render child routes if authenticated
-  return children
+  if (!isAuthenticated && !isPublic) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
 }
