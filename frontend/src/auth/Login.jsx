@@ -11,7 +11,7 @@ export default function Login({ setUser }) {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {4
+ const handleSubmit = async (e) => {
   console.log("backurl", BACK_URL);
   e.preventDefault();
   setError('');
