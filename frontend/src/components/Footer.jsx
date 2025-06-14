@@ -20,21 +20,20 @@ function Footer() {
         {/* Navigation Links */}
         <div className="flex justify-between md:justify-center md:gap-16">
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-indigo-200 tracking-wide">Product</h3>
+            <h3 className="text-lg font-semibold mb-4 text-indigo-200 tracking-wide">Service</h3>
             <ul className="space-y-2 text-base">
               <li><Link to={"/AddResume"} className="hover:text-purple-300 transition">Resume Builder</Link></li>
               <li><Link to={"/Checkscore"} className="hover:text-purple-300 transition">ATS Score Checker</Link></li>
-              <li><Link to={"/pricing"} className="hover:text-purple-300 transition">Pricing</Link></li>
-              <li><Link to={"/faq"} className="hover:text-purple-300 transition">FAQ</Link></li>
+                <li><Link to={"/faq"} className="hover:text-purple-300 transition">FAQ</Link></li>
             </ul>
           </div>
           <div>
-            <h3 className="text-lg font-semibold mb-4 text-indigo-200 tracking-wide">Company</h3>
+            <h3 className="text-lg font-semibold mb-4 text-indigo-200 tracking-wide">About</h3>
             <ul className="space-y-2 text-base">
               <li><Link to={"/about"} className="hover:text-purple-300 transition">About Us</Link></li>
               <li><Link to={"/blog"} className="hover:text-purple-300 transition">Blog</Link></li>
               <li><Link to={"/contact"} className="hover:text-purple-300 transition">Contact</Link></li>
-              <li><Link to={"#"} className="hover:text-purple-300 transition">Privacy Policy</Link></li>
+              <li><Link to={"/privacypolicy"} className="hover:text-purple-300 transition">Privacy Policy</Link></li>
             </ul>
           </div>
         </div>

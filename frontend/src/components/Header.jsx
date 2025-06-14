@@ -169,6 +169,15 @@ export default function Header({ user, handleLogout }) {
                 </li>
                 <li>
                   <Link
+                    to={"/feedback"}
+                    className="text-gray-200 hover:text-purple-300 transition font-medium"
+                    onClick={handleLinkClick}
+                  >
+                    Feedback
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to={"/dashboard/resumes"}
                     className="text-gray-200 hover:text-purple-300 transition font-medium"
                     onClick={handleLinkClick}

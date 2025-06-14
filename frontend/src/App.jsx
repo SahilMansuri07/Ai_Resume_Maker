@@ -14,6 +14,9 @@ import ProtectedRoutes from './auth/ProtectedRoutes';
 import About from './pages/About';
 import EditResume from './pages/EditResume';
 import Blog from './pages/Blog';
+import Feedback from './pages/Feedback';
+import Faq from './pages/Faq';
+import PrivacyPolicy from './pages/Privacy-policy';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -44,7 +47,10 @@ export default function App() {
         {/* Public routes */}
         <Route path="/" element={<Hero />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<Faq />} />
+        <Route path="/privacypolicy" element={<PrivacyPolicy />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/feedback" element={<Feedback />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/login" element={<Login setUser={setUser} />} />
         <Route path="/about" element={<About />} />
