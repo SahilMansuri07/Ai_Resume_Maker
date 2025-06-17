@@ -11,6 +11,7 @@ export default function Register() {
 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -29,6 +30,15 @@ export default function Register() {
 
     const { email, password, name } = form;
     const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
+
+    if (!BACK_URL) {
+      setError('Wait for 10 to 20 seconds, the server is running slow!');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('Waking up the server... please wait ⏳');
+
     try {
       const response = await fetch(`${BACK_URL}/register/`, {
         method: 'POST',
@@ -38,9 +48,9 @@ export default function Register() {
         body: JSON.stringify({ name, email, password }),
       });
 
-      if (!response.ok) {
-        const data = await response.json(); 
+      const data = await response.json();
 
+      if (!response.ok) {
         if (Array.isArray(data.detail)) {
           const errorMessages = data.detail
             .map((err) => `${err.loc.join(' > ')}: ${err.msg}`)
@@ -50,17 +60,15 @@ export default function Register() {
           setError(data.detail || 'Registration failed');
         }
       } else {
-        const data = await response.json();
-        setMessage('Registration successful! Your user ID is: ' + data.id);
+        setMessage('Registration successful! 🎉');
         setForm({ email: '', password: '', confirmPassword: '', name: '' });
-
-        // Navigate only on success
-        navigate("/login");
+        navigate('/login');
       }
     } catch (err) {
       setError('Error: ' + err.message);
       console.error(err);
-      
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -68,6 +76,14 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-700 to-indigo-900 px-4">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-md border border-purple-400 rounded-2xl p-8 shadow-xl">
         <h2 className="text-3xl font-bold text-white text-center mb-6">Create Your Account 📝</h2>
+
+        {loading && (
+          <p className="text-blue-300 text-sm mb-4 text-center">
+            Waking up server... please wait ⏳
+          </p>
+        )}
+        {message && <p className="mt-4 text-green-400 text-center">{message}</p>}
+        {error && <p className="mt-4 text-red-500 text-center">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -132,14 +148,12 @@ export default function Register() {
 
           <button
             type="submit"
+            disabled={loading}
             className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition duration-300 shadow-md"
           >
-            Register
+            {loading ? 'Registering...' : 'Register'}
           </button>
         </form>
-
-        {message && <p className="mt-4 text-green-400 text-center">{message}</p>}
-        {error && <p className="mt-4 text-red-500 text-center">{error}</p>}
 
         <p className="mt-6 text-center text-purple-200 text-sm">
           Already have an account?{' '}

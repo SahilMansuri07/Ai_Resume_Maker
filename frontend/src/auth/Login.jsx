@@ -5,63 +5,79 @@ export default function Login({ setUser }) {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
-  const navigate = useNavigate(); // Replace with your backend URL
+  const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
   const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
- const handleSubmit = async (e) => {
-  console.log("backurl", BACK_URL);
-  e.preventDefault();
-  setError('');
-  setMessage('');
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setMessage('');
+    setLoading(true);
 
-  try {
-    const response = await fetch(`${BACK_URL}/login/`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(form),
-    });
+    if (!BACK_URL) {
+      setError('Wait for 10 to 20 sec server is running slow ! .');
+      setLoading(false);
+      return;
+    }
 
-    let data;
     try {
-      data = await response.json();
-    } catch (err) {
-      throw new Error('Server did not return valid JSON. Please check the backend URL or server logs.');
-    }
+      const response = await fetch(`${BACK_URL}/login/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(form),
+      });
 
-    if (!response.ok) {
-      if (Array.isArray(data.detail)) {
-        const errorMessages = data.detail
-          .map((err) => `${err.loc.join(' > ')}: ${err.msg}`)
-          .join('; ');
-        setError(errorMessages);
-      } else {
-        setError(data.detail || 'Login failed');
+      let data;
+      try {
+        data = await response.json();
+      } catch (err) {
+        throw new Error('Server returned invalid JSON. Please check backend logs.');
       }
-    } else {
-      setMessage('Login successful! Welcome back!');
-      setForm({ email: '', password: '' });
-      localStorage.setItem('token', data.access_token);
 
-      const username = form.email.split('@')[0];
-      setUser({ username });
+      if (!response.ok) {
+        if (Array.isArray(data.detail)) {
+          const errorMessages = data.detail
+            .map((err) => `${err.loc.join(' > ')}: ${err.msg}`)
+            .join('; ');
+          setError(errorMessages);
+        } else {
+          setError(data.detail || 'Login failed');
+        }
+      } else {
+        setMessage('Login successful! Welcome back!');
+        setForm({ email: '', password: '' });
+        localStorage.setItem('token', data.access_token);
 
-      navigate('/');
+        const username = form.email.split('@')[0];
+        setUser({ username });
+
+        navigate('/');
+      }
+    } catch (err) {
+      setError('Error: ' + err.message);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError('Error: ' + err.message);
-  }
-};
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-900 via-purple-700 to-indigo-900 px-4">
       <div className="w-full max-w-md bg-white/10 backdrop-blur-md border border-purple-400 rounded-2xl p-8 shadow-xl">
         <h2 className="text-3xl font-bold text-white text-center mb-6">Welcome Back 👋</h2>
 
+        {loading && (
+          <p className="text-blue-300 text-sm mb-4 text-center">
+            Waking up server... please wait ⏳
+          </p>
+        )}
         {error && <p className="text-red-400 text-sm mb-4 text-center">{error}</p>}
         {message && <p className="text-green-400 text-sm mb-4 text-center">{message}</p>}
 
@@ -111,8 +127,9 @@ export default function Login({ setUser }) {
           <button
             type="submit"
             className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-3 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition duration-300 shadow-md"
+            disabled={loading}
           >
-            Login
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
