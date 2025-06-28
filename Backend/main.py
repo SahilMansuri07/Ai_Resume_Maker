@@ -98,6 +98,27 @@ async def add_new_resume(resume: Resume = Body(...), token_data: dict = Depends(
     result = await resume_collection.insert_one(resume_data)
     return {"message": "Resume added", "id": str(result.inserted_id)}
 
+@app.delete("/resume/{resume_id}")
+async def delete_resume(resume_id: str, token_data: dict = Depends(verify_token)):
+    user_email = token_data.get("sub")
+    if not user_email:
+        raise HTTPException(status_code=401, detail="Invalid token.")
+
+    try:
+        obj_id = ObjectId(resume_id)
+    except:
+        raise HTTPException(status_code=400, detail="Invalid resume ID format.")
+
+    # 👇 This avoids KeyError and ensures ownership
+    resume = await resume_collection.find_one({"_id": obj_id, "user_email": user_email})
+    if not resume:
+        raise HTTPException(status_code=404, detail="Resume not found or access denied.")
+
+    await resume_collection.delete_one({"_id": obj_id})
+    return {"message": "Resume deleted successfully"}
+
+
+
 # resume list endpoint
 @app.get("/resume/list")
 async def get_resumes(token_data: dict = Depends(verify_token)):

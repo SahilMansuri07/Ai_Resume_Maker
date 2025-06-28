@@ -38,6 +38,14 @@ export default function Header({ user, handleLogout }) {
               <ul className="flex items-center gap-6 text-base">
                 <li>
                   <Link
+                    to={"/"}
+                    className="text-gray-200 hover:text-purple-300 transition font-medium"
+                  >
+                    Home
+                  </Link>
+                </li>
+                <li>
+                  <Link
                     to={"/about"}
                     className="text-gray-200 hover:text-purple-300 transition font-medium"
                   >
