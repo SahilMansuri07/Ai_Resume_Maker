@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
-    <main className="bg-white text-gray-900 min-h-screen">
+    <main className="bg-[#ede9e3] text-gray-900 min-h-screen">
       {/* Hero Section */}
       <section className="relative z-10 pt-16 pb-12 sm:pt-24 sm:pb-20 mx-auto max-w-3xl px-4 text-center">
       

@@ -92,19 +92,36 @@ const ScorePage = () => {
 
       <div className="w-full max-w-3xl space-y-8">
         {/* Upload Section */}
-        <div className="flex flex-col">
-          <label className="text-purple-200 text-lg font-semibold mb-2">Upload Your Resume</label>
-          <input
-            type="file"
-            onChange={handleFileChange}
-            className="block w-full cursor-pointer rounded-lg border border-purple-400 bg-purple-100/10 p-3 text-purple-200 text-sm
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-lg file:border-0
-              file:bg-purple-600 file:text-white
-              hover:file:bg-purple-700
-              file:cursor-pointer"
-          />
-        </div>
+       <div className="flex flex-col gap-1">
+  <label
+    htmlFor="resume-upload"
+    className="text-purple-200 text-lg font-semibold mb-2"
+  >
+    Upload Your Resume
+  </label>
+  <input
+    id="resume-upload"
+    type="file"
+    accept=".pdf,.doc,.docx"
+    onChange={handleFileChange}
+    className="block w-full cursor-pointer rounded-lg border border-purple-400 bg-purple-100/10 p-3 text-purple-200 text-sm
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-lg file:border-0
+      file:bg-purple-600 file:text-white
+      transition-colors duration-200
+      hover:file:bg-purple-700
+      focus:outline-none focus:ring-2 focus:ring-purple-500
+      file:cursor-pointer"
+    aria-describedby="resume-upload-help"
+  />
+  {/* Show selected file name if present */}
+  {selectedFile && (
+    <span className="text-purple-300 text-xs mt-1">{selectedFile.name}</span>
+  )}
+  <span id="resume-upload-help" className="text-purple-300 text-xs mt-1">
+    Accepted file types: PDF, DOC, DOCX. Max size 5MB.
+  </span>
+</div>
 
         {/* Job Description */}
         <div className="flex flex-col">
