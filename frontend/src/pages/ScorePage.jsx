@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { FiUpload, FiFileText, FiCheckCircle, FiAlertTriangle } from 'react-icons/fi';
 
 const CircularScore = ({ score }) => {
   const radius = 60;
@@ -17,7 +18,7 @@ const CircularScore = ({ score }) => {
     <div className="relative w-[120px] h-[120px] mx-auto mb-4">
       <svg height={radius * 2} width={radius * 2}>
         <circle
-          stroke="#4c1d95"
+          stroke="#e9d5ff"
           fill="transparent"
           strokeWidth={stroke}
           r={normalizedRadius}
@@ -87,101 +88,114 @@ const ScorePage = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gradient-to-b from-[#0f172a] via-[#1e1b4b] to-[#4c1d95] px-4 py-10 text-white">
-      <h1 className="mb-8 text-3xl md:text-5xl font-extrabold text-purple-300 text-center">Resume Analyzer</h1>
+    <div className="min-h-screen px-4 bg-[#000000] bg-[radial-gradient(#ffffff33_1px,#00091d_1px)] bg-[size:20px_20px] py-10 text-white">
 
-      <div className="w-full max-w-3xl space-y-8">
-        {/* Upload Section */}
-        <div className="flex flex-col gap-1">
-          <label htmlFor="resume-upload" className="text-purple-200 text-lg font-semibold mb-2">
-            Upload Your Resume (PDF only)
-          </label>
-          <input
-            id="resume-upload"
-            type="file"
-            accept=".pdf"
-            onChange={handleFileChange}
-            key={selectedFile?.name}
-            className="block w-full cursor-pointer rounded-lg border border-purple-400 bg-purple-100/10 p-3 text-purple-200 text-sm
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-lg file:border-0
-              file:bg-purple-600 file:text-white
-              transition-colors duration-200
-              hover:file:bg-purple-700
-              focus:outline-none focus:ring-2 focus:ring-purple-500
-              file:cursor-pointer"
-            aria-describedby="resume-upload-help"
-          />
-          {selectedFile && (
-            <span className="text-purple-300 text-xs mt-1">{selectedFile.name}</span>
-          )}
-          <span id="resume-upload-help" className="text-purple-300 text-xs mt-1">
-            Accepted file type: PDF only. Max size 5MB.
-          </span>
-        </div>
+    
 
-        {/* Job Description */}
-        <div className="flex flex-col">
-          <label className="text-purple-200 text-lg font-semibold mb-2">Paste Job Description</label>
-          <textarea
-            rows={6}
-            value={jobDescription}
-            onChange={handleDescriptionChange}
-            placeholder="Paste job description here..."
-            className="w-full rounded-lg border border-purple-300 bg-purple-100/10 p-4 text-purple-100 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-          />
-        </div>
+      
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold text-center mb-8 text-purple-200">Resume Analyzer</h1>
 
-        {/* Submit Button */}
-        <div className="flex justify-center">
+        <div className="space-y-6">
+          {/* Upload Section */}
+          <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+            <label className="block text-lg font-medium text-purple-100 mb-3">
+              <FiFileText className="inline mr-2" />
+              Upload Your Resume
+            </label>
+            <div className="flex items-center gap-4">
+              <label className="flex-1 cursor-pointer">
+                <div className="flex items-center justify-center w-full px-4 py-6 border-2 border-dashed border-purple-300 rounded-lg hover:bg-white/5 transition">
+                  <FiUpload className="text-xl mr-2 text-purple-200" />
+                  <span className="text-purple-200">
+                    {selectedFile ? selectedFile.name : 'Choose PDF file'}
+                  </span>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </div>
+              </label>
+            </div>
+          </div>
+
+          {/* Job Description */}
+          <div className="bg-white/5 p-6 rounded-xl border border-white/10">
+            <label className="block text-lg font-medium text-purple-100 mb-3">
+              Job Description
+            </label>
+            <textarea
+              rows={6}
+              value={jobDescription}
+              onChange={handleDescriptionChange}
+              placeholder="Paste the job description here..."
+              className="w-full bg-white/5 border border-white/10 rounded-lg p-4 text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+
+          {/* Submit Button */}
           <button
             onClick={handleSubmit}
             disabled={loading}
-            className="rounded-xl bg-purple-600 px-8 py-3 font-semibold text-white text-sm shadow hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-purple-600 hover:bg-purple-700 text-white font-medium py-3 px-4 rounded-lg transition disabled:opacity-50"
           >
-            {loading ? 'Analyzing...' : 'Analyze'}
+            {loading ? 'Analyzing...' : 'Analyze Resume'}
           </button>
-        </div>
 
-        {/* Results Section */}
-        {result && (
-          <div className="rounded-2xl bg-white/10 p-6 shadow-xl backdrop-blur-lg space-y-6 border border-purple-400">
-            <h2 className="border-b border-purple-300 pb-2 text-2xl font-bold text-purple-200">Analysis Result</h2>
+          {/* Results Section */}
+          {result && (
+            <div className="bg-white/5 p-6 rounded-xl border border-white/10 space-y-6">
+              <h2 className="text-2xl font-bold text-purple-100 border-b border-white/10 pb-3">
+                Analysis Results
+              </h2>
 
-            <div>
-              <p className="mb-1 font-semibold text-lg text-purple-300">Score</p>
-              <CircularScore score={parseInt(result['JD Match'])} />
-            </div>
+              <div className="text-center">
+                <CircularScore score={parseInt(result['JD Match'])} />
+                <p className="text-purple-200 mt-2">Match Score</p>
+              </div>
 
-            <div>
-              <p className="mb-1 font-semibold text-lg text-purple-300">Profile Summary</p>
-              <p className="whitespace-pre-line text-purple-100 text-sm">{result['Profile Summary']}</p>
-            </div>
-
-            {result['Missing Keywords']?.length > 0 ? (
               <div>
-                <p className="mb-1 font-semibold text-lg text-purple-300">Missing Keywords</p>
-                <ul className="list-disc list-inside space-y-1 text-purple-100 text-sm">
-                  {result['Missing Keywords'].map((keyword, index) => (
-                    <li key={index}>⚠️ {keyword}</li>
-                  ))}
-                </ul>
+                <h3 className="text-lg font-medium text-purple-100 mb-2">Profile Summary</h3>
+                <p className="text-white/90 whitespace-pre-line">
+                  {result['Profile Summary']}
+                </p>
+              </div>
 
-                <div className="mt-6 p-6 rounded-2xl bg-white/5 border border-purple-400 hover:shadow-lg transition duration-300">
+              {result['Missing Keywords']?.length > 0 ? (
+                <div>
+                  <h3 className="text-lg font-medium text-purple-100 mb-2 flex items-center">
+                    <FiAlertTriangle className="mr-2 text-yellow-400" />
+                    Missing Keywords
+                  </h3>
+                  <ul className="space-y-2">
+                    {result['Missing Keywords'].map((keyword, index) => (
+                      <li key={index} className="flex items-start">
+                        <span className="text-yellow-400 mr-2">•</span>
+                        <span className="text-white/90">{keyword}</span>
+                      </li>
+                    ))}
+                  </ul>
+
                   <button
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="w-full bg-purple-600 text-white font-semibold text-sm py-3 px-4 rounded-lg hover:bg-purple-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full mt-6 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center hover:opacity-90 transition"
                   >
-                    🚀 Improve with AI
+                    
+                    Improve with AI
                   </button>
                 </div>
-              </div>
-            ) : (
-              <p className="font-semibold text-green-400 text-sm">✅ No Missing Keywords</p>
-            )}
-          </div>
-        )}
+              ) : (
+                <div className="flex items-center text-green-400">
+                  <FiCheckCircle className="mr-2" />
+                  No missing keywords found
+                </div>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

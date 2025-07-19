@@ -29,6 +29,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+
 # Include user and resume routers
 app.include_router(user_router)
 app.include_router(resume_router)
