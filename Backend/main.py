@@ -30,6 +30,12 @@ app.add_middleware(
 )
 
 
+@app.get("/")
+def read_root():
+    return {"message": "Backend is running!"}
+
+
+
 
 # Include user and resume routers
 app.include_router(user_router)
