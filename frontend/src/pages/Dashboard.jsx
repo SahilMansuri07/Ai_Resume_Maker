@@ -38,7 +38,6 @@ export default function Dashboard() {
 
   const handleDeleteResume = async (id) => {
     const confirmDelete = window.confirm('Are you sure you want to delete this resume?')
-    console.log(id)
     if (!confirmDelete) return
 
     try {
@@ -62,6 +61,39 @@ export default function Dashboard() {
       alert('Error deleting resume.')
     }
   }
+
+// const handleDownloadResume = async (id) => {
+//   try {
+//     const token = localStorage.getItem('token');
+//     const response = await fetch(`${BACK_URL}/resume/download/${id}`, {
+//       method: 'GET',
+//       headers: {
+//         Authorization: `Bearer ${token}`,
+//       },
+//     });
+
+//     if (!response.ok) {
+//       const errorText = await response.text();
+//       console.error("Download failed with response:", response.status, errorText);
+//       throw new Error(`Failed to download PDF: ${response.statusText}`);
+//     }
+
+//     const blob = await response.blob();
+//     const url = window.URL.createObjectURL(blob);
+//     const link = document.createElement('a');
+//     link.href = url;
+//     link.setAttribute('download', `resume_${id}.pdf`);
+//     document.body.appendChild(link);
+//     link.click();
+//     document.body.removeChild(link);
+//     window.URL.revokeObjectURL(url);
+//   } catch (error) {
+//     console.error('Download error:', error);
+//     alert('Error downloading PDF: ' + error.message);
+//   }
+// };
+
+
 
   return (
     <div className="min-h-screen flex flex-col items-center bg-gradient-to-br from-[#0f172a] via-[#5a189a] to-[#4f46e5] px-6 pt-16 pb-16 relative">
@@ -111,13 +143,23 @@ export default function Dashboard() {
                   </div>
                 </div>
 
-                <button
-                  onClick={() => handleDeleteResume(form._id)}
-                  className="absolute top-3 right-3 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md"
-                  title="Delete Resume"
-                >
-                  <FaTrashAlt size={14} />
-                </button>
+                <div className="flex items-center justify-between mt-4">
+                  <button
+                    onClick={() => handleDownloadResume(form._id)}
+                    className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm"
+                    title="Download Resume PDF"
+                  >
+                    Download PDF
+                  </button>
+
+                  <button
+                    onClick={() => handleDeleteResume(form._id)}
+                    className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full shadow-md"
+                    title="Delete Resume"
+                  >
+                    <FaTrashAlt size={14} />
+                  </button>
+                </div>
               </div>
             ))}
           </div>

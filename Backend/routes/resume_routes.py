@@ -1,16 +1,19 @@
-from fastapi import APIRouter, UploadFile, File, Form, HTTPException, Depends, Body, Request, status
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, HTTPException, Depends, Body
 from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi.encoders import jsonable_encoder
 from bson import ObjectId
 from dotenv import load_dotenv
 import os
 import json
 
+
 from auth_utils import verify_token
 from Model.AddResumeModel import Resume
-from helper import extract_pdf_text, prepare_prompt, get_gemini_response, get_summary_response
 
+
+# from fastapi.responses import StreamingResponse
+# from jinja2 import Environment, FileSystemLoader
+# from weasyprint import HTML
 load_dotenv()
 MONGO_URI = os.getenv("MONGO_URI")
 client = AsyncIOMotorClient(MONGO_URI)
@@ -18,20 +21,6 @@ db = client["Airesume"]
 resume_collection = db["resumes"]
 
 router = APIRouter()
-
-
-@router.post("/analyze")
-async def analyze_resume(resume: UploadFile = File(...), job_description: str = Form(...)):
-    if resume.content_type != "application/pdf":
-        raise HTTPException(status_code=400, detail="Only PDF files are supported.")
-    try:
-        resume_text = extract_pdf_text(resume.file)
-        prompt = prepare_prompt(resume_text, job_description)
-        ai_response = get_gemini_response(prompt)
-        response_json = json.loads(ai_response)
-        return JSONResponse(content=response_json)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/resume/add")
 async def add_new_resume(resume: Resume = Body(...), token_data: dict = Depends(verify_token)):
@@ -72,30 +61,6 @@ async def get_resumes(token_data: dict = Depends(verify_token)):
         doc["_id"] = str(doc["_id"])
         resumes.append(doc)
     return resumes
-
-@router.post("/gen/summary")
-async def generate_summary(request: Request):
-    try:
-        data = await request.json()
-        job_title = data.get("job_title", "").strip()
-        if not job_title:
-            raise ValueError("Please enter a job title.")
-
-        prompt = f"""
-Act as a professional resume writer. Generate a compelling, concise, and job-specific professional summary suitable for the beginning of a resume.
-Job Title: {job_title}
-Guidelines:
-- Keep it within 3–4 sentences.
-- Use confident, formal tone.
-- Focus on industry-relevant keywords and impact-driven language.
-- Avoid fluff, make it tailored and job-ready.
-Return only the summary text without headings.
-"""
-        summary = await get_summary_response(prompt)
-        return {"summary": summary}
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/resume/get/{resume_id}")
 async def get_resume_by_id(resume_id: str, token_data: dict = Depends(verify_token)):

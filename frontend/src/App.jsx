@@ -1,6 +1,4 @@
-// App.jsx
-import { useState, useEffect } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import Hero from './pages/Hero';
@@ -17,31 +15,17 @@ import Blog from './pages/Blog';
 import Feedback from './pages/Feedback';
 import Faq from './pages/Faq';
 import PrivacyPolicy from './pages/Privacy-policy';
+import { useUser } from './context/UserContext';
+import ResumePreviewPage from './pages/Resume-Previewfinal';
 
 export default function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = JSON.parse(atob(token.split('.')[1]));
-        setUser(decoded.sub); // You can also store more info if needed
-      } catch (error) {
-        console.error('Invalid token:', error);
-        setUser(null);
-      }
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-  };
+  // Access the full user object and logout from context
+  const { user, logout } = useUser();
 
   return (
     <>
-      <Header user={user} handleLogout={handleLogout} />
+      {/* Pass no props to Header, it will read user + logout from context itself */}
+      <Header />
 
       <Routes>
         {/* Public routes */}
@@ -52,14 +36,14 @@ export default function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/feedback" element={<Feedback />} />
         <Route path="/blog" element={<Blog />} />
-        <Route path="/login" element={<Login setUser={setUser} />} />
+        <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
 
         {/* Protected routes */}
         <Route
           path="/CheckScore"
           element={
-            <ProtectedRoutes user={user}>
+            <ProtectedRoutes>
               <ScorePage />
             </ProtectedRoutes>
           }
@@ -67,15 +51,25 @@ export default function App() {
         <Route
           path="/Addresume"
           element={
-            <ProtectedRoutes user={user}>
+            <ProtectedRoutes>
               <AddResume />
+              <ResumePreviewPage/>
+            </ProtectedRoutes>
+          }
+        />
+          <Route
+          path="/resume-preview/:id"
+          element={
+            <ProtectedRoutes>
+              <AddResume />
+              <ResumePreviewPage/>
             </ProtectedRoutes>
           }
         />
         <Route
           path="/dashboard/resumes/resume/update/:id"
           element={
-            <ProtectedRoutes user={user}>
+            <ProtectedRoutes>
               <AddResume />
             </ProtectedRoutes>
           }
@@ -83,7 +77,7 @@ export default function App() {
         <Route
           path="/editresume/:id"
           element={
-            <ProtectedRoutes user={user}>
+            <ProtectedRoutes>
               <EditResume />
             </ProtectedRoutes>
           }
@@ -91,7 +85,7 @@ export default function App() {
         <Route
           path="/dashboard/resumes"
           element={
-            <ProtectedRoutes user={user}>
+            <ProtectedRoutes>
               <Dashboard />
             </ProtectedRoutes>
           }

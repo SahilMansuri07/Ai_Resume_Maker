@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { FaUserAlt, FaBars, FaTimes } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
-export default function Header({ user, handleLogout }) {
+export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { user, logout } = useUser();
+  const navigate = useNavigate();
 
   // Closes mobile menu when clicking any link
   const handleLinkClick = () => setMenuOpen(false);
+
+  const handleLogout = () => {
+    logout();
+    navigate('/login');
+  };
 
   return (
     <header className="bg-gradient-to-r from-[#14032e] via-[#1d1936] to-[#3b157e] shadow-lg z-50">

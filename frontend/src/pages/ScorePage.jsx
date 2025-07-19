@@ -60,14 +60,14 @@ const ScorePage = () => {
 
   const handleSubmit = async () => {
     if (!selectedFile || !jobDescription) {
-      alert('Please upload a resume and enter a job description.');
+      alert('Please upload a PDF resume and enter a job description.');
       return;
     }
 
     const formData = new FormData();
     formData.append('resume', selectedFile);
     formData.append('job_description', jobDescription);
-     const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
+    const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
 
     try {
       setLoading(true);
@@ -76,10 +76,10 @@ const ScorePage = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-
-      alert('Something went wrong. Check console for details.');
       setResult(response.data);
     } catch (error) {
+      const message = error.response?.data?.detail || "An error occurred while analyzing the resume.";
+      alert(message);
       console.error('Error uploading file:', error);
     } finally {
       setLoading(false);
@@ -92,36 +92,33 @@ const ScorePage = () => {
 
       <div className="w-full max-w-3xl space-y-8">
         {/* Upload Section */}
-       <div className="flex flex-col gap-1">
-  <label
-    htmlFor="resume-upload"
-    className="text-purple-200 text-lg font-semibold mb-2"
-  >
-    Upload Your Resume
-  </label>
-  <input
-    id="resume-upload"
-    type="file"
-    accept=".pdf,.doc,.docx"
-    onChange={handleFileChange}
-    className="block w-full cursor-pointer rounded-lg border border-purple-400 bg-purple-100/10 p-3 text-purple-200 text-sm
-      file:mr-4 file:py-2 file:px-4
-      file:rounded-lg file:border-0
-      file:bg-purple-600 file:text-white
-      transition-colors duration-200
-      hover:file:bg-purple-700
-      focus:outline-none focus:ring-2 focus:ring-purple-500
-      file:cursor-pointer"
-    aria-describedby="resume-upload-help"
-  />
-  {/* Show selected file name if present */}
-  {selectedFile && (
-    <span className="text-purple-300 text-xs mt-1">{selectedFile.name}</span>
-  )}
-  <span id="resume-upload-help" className="text-purple-300 text-xs mt-1">
-    Accepted file types: PDF, DOC, DOCX. Max size 5MB.
-  </span>
-</div>
+        <div className="flex flex-col gap-1">
+          <label htmlFor="resume-upload" className="text-purple-200 text-lg font-semibold mb-2">
+            Upload Your Resume (PDF only)
+          </label>
+          <input
+            id="resume-upload"
+            type="file"
+            accept=".pdf"
+            onChange={handleFileChange}
+            key={selectedFile?.name}
+            className="block w-full cursor-pointer rounded-lg border border-purple-400 bg-purple-100/10 p-3 text-purple-200 text-sm
+              file:mr-4 file:py-2 file:px-4
+              file:rounded-lg file:border-0
+              file:bg-purple-600 file:text-white
+              transition-colors duration-200
+              hover:file:bg-purple-700
+              focus:outline-none focus:ring-2 focus:ring-purple-500
+              file:cursor-pointer"
+            aria-describedby="resume-upload-help"
+          />
+          {selectedFile && (
+            <span className="text-purple-300 text-xs mt-1">{selectedFile.name}</span>
+          )}
+          <span id="resume-upload-help" className="text-purple-300 text-xs mt-1">
+            Accepted file type: PDF only. Max size 5MB.
+          </span>
+        </div>
 
         {/* Job Description */}
         <div className="flex flex-col">
@@ -153,7 +150,7 @@ const ScorePage = () => {
 
             <div>
               <p className="mb-1 font-semibold text-lg text-purple-300">Score</p>
-              <CircularScore score={result['JD Match']} />
+              <CircularScore score={parseInt(result['JD Match'])} />
             </div>
 
             <div>
@@ -169,6 +166,16 @@ const ScorePage = () => {
                     <li key={index}>⚠️ {keyword}</li>
                   ))}
                 </ul>
+
+                <div className="mt-6 p-6 rounded-2xl bg-white/5 border border-purple-400 hover:shadow-lg transition duration-300">
+                  <button
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    className="w-full bg-purple-600 text-white font-semibold text-sm py-3 px-4 rounded-lg hover:bg-purple-700 transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    🚀 Improve with AI
+                  </button>
+                </div>
               </div>
             ) : (
               <p className="font-semibold text-green-400 text-sm">✅ No Missing Keywords</p>

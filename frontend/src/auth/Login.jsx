@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
 
-export default function Login({ setUser }) {
+export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const { login } = useUser();
   const navigate = useNavigate();
   const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
 
@@ -21,7 +23,7 @@ export default function Login({ setUser }) {
     setLoading(true);
 
     if (!BACK_URL) {
-      setError('Wait for 10 to 20 sec server is running slow ! .');
+      setError('Wait for 10 to 20 sec server is running slow !');
       setLoading(false);
       return;
     }
@@ -54,10 +56,10 @@ export default function Login({ setUser }) {
       } else {
         setMessage('Login successful! Welcome back!');
         setForm({ email: '', password: '' });
-        localStorage.setItem('token', data.access_token);
 
-        const username = form.email.split('@')[0];
-        setUser({ username });
+        // Get username from backend if available, fallback to email prefix
+        const username = data.username || form.email.split('@')[0];
+        login(username, data.access_token); // Store in UserContext/localStorage
 
         navigate('/');
       }
