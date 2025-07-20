@@ -30,7 +30,7 @@ export default function Contact() {
             We'd Love To Hear From You
           </h2>
           <p className="mt-2 text-gray-500 max-w-md mx-auto">
-            Have questions or need support? Fill out the form below.
+            Have questions ? Fill out the form below.
           </p>
         </div>
 
