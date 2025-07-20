@@ -11,6 +11,7 @@ export default function Login() {
   const { login } = useUser();
   const navigate = useNavigate();
   const BACK_URL = import.meta.env.VITE_FAST_BACKEND_URL;
+  console.log('BACK_URL:', BACK_URL);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -29,7 +30,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch(`${BACK_URL}/login/`, {
+      const response = await fetch(`${BACK_URL}/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
